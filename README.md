@@ -34,13 +34,21 @@ bun run preview
 
 ## Environment variables
 
-Set these at build time (they are inlined into the bundle by Vite):
+The app talks to a Supabase project through these three variables. Vite inlines
+them into the client bundle at build time, so set them in `.env` locally and in
+the Vercel project's environment variables for deploys. `.env.example` lists the
+shape.
 
 ```
 VITE_SUPABASE_URL=
 VITE_SUPABASE_PUBLISHABLE_KEY=
 VITE_SUPABASE_PROJECT_ID=
 ```
+
+`VITE_SUPABASE_PUBLISHABLE_KEY` takes Supabase's publishable key
+(`sb_publishable_*`) — the browser-safe, RLS-gated key that replaced the older
+anon key. Never put a secret (`sb_secret_*` / service-role) key in a `VITE_`
+variable; anything prefixed `VITE_` ships to the browser.
 
 ## Deploying to Vercel
 
