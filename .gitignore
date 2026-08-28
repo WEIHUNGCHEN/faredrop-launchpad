@@ -12,6 +12,10 @@ dist
 *.local
 .vercel
 
+# Local env values live here; the real ones are set in Vercel.
+# .env.example documents which variables are needed.
+.env
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

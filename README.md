@@ -35,9 +35,13 @@ bun run preview
 ## Environment variables
 
 The app talks to a Supabase project through these three variables. Vite inlines
-them into the client bundle at build time, so set them in `.env` locally and in
-the Vercel project's environment variables for deploys. `.env.example` lists the
-shape.
+them into the client bundle at build time.
+
+`.env` is git-ignored: copy `.env.example` to `.env` for local development, and
+set the same three variables in the Vercel project's Environment Variables for
+deploys. If both are present, real environment variables win over the `.env`
+file. Changing them requires a redeploy, since the values are baked in at build
+time.
 
 ```
 VITE_SUPABASE_URL=

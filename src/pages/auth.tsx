@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState, type FormEvent } from "react";
-import { Plane, Loader2 } from "lucide-react";
+import { Plane, Loader2, MailCheck } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { usePageMeta } from "@/lib/page-meta";
 
@@ -29,22 +29,38 @@ export default function AuthPage({ initialMode }: { initialMode: AuthMode }) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  // Set when sign-up succeeded but Supabase returned no session, which means
+  // the project requires email confirmation before the account can be used.
+  const [awaitingConfirmation, setAwaitingConfirmation] = useState<string | null>(null);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setError(null);
     setLoading(true);
     try {
-      const { error } =
-        mode === "sign-in"
-          ? await supabase.auth.signInWithPassword({ email, password })
-          : await supabase.auth.signUp({
-              email,
-              password,
-              options: { emailRedirectTo: window.location.origin },
-            });
+      if (mode === "sign-in") {
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) {
+          setError(error.message);
+          return;
+        }
+        navigate("/app");
+        return;
+      }
+
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: { emailRedirectTo: window.location.origin },
+      });
       if (error) {
         setError(error.message);
+        return;
+      }
+      // No session means the account exists but is unconfirmed — sending the
+      // user to /app would just bounce them back here with nothing explained.
+      if (!data.session) {
+        setAwaitingConfirmation(email);
         return;
       }
       navigate("/app");
@@ -69,6 +85,31 @@ export default function AuthPage({ initialMode }: { initialMode: AuthMode }) {
       <main className="flex flex-1 items-center justify-center px-6 py-16">
         <div className="animate-fade-up w-full max-w-sm">
           <div className="rounded-2xl border border-border bg-card p-8 shadow-2xl shadow-black/40">
+            {awaitingConfirmation ? (
+              <div className="text-center">
+                <span className="mx-auto mb-5 flex size-12 items-center justify-center rounded-xl bg-accent text-accent-foreground">
+                  <MailCheck className="size-5" />
+                </span>
+                <h1 className="text-xl font-semibold text-card-foreground">Check your email</h1>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                  We sent a confirmation link to{" "}
+                  <span className="font-medium text-card-foreground">{awaitingConfirmation}</span>.
+                  Open it to activate your account, then come back and sign in.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setAwaitingConfirmation(null);
+                    setPassword("");
+                    navigate("/sign-in");
+                  }}
+                  className="mt-6 inline-flex items-center justify-center rounded-lg border border-input bg-background px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-accent"
+                >
+                  Back to sign in
+                </button>
+              </div>
+            ) : (
+              <>
             <h1 className="text-xl font-semibold text-card-foreground">
               {mode === "sign-in" ? "Welcome back" : "Create your account"}
             </h1>
@@ -140,6 +181,8 @@ export default function AuthPage({ initialMode }: { initialMode: AuthMode }) {
                 {mode === "sign-in" ? "Sign up" : "Sign in"}
               </button>
             </p>
+              </>
+            )}
           </div>
         </div>
       </main>
