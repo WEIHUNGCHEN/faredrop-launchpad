@@ -1,31 +1,30 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate } from "react-router-dom";
 import { useState, type FormEvent } from "react";
 import { Plane, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { usePageMeta } from "@/lib/page-meta";
 
-export const Route = createFileRoute("/auth")({
-  head: () => ({
-    meta: [
-      { title: "Sign in — FareDrop" },
-      {
-        name: "description",
-        content: "Sign in or create your FareDrop account to start watching flight prices.",
-      },
-      { property: "og:title", content: "Sign in — FareDrop" },
-      {
-        property: "og:description",
-        content: "Sign in or create your FareDrop account to start watching flight prices.",
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-    ],
-  }),
-  component: AuthPage,
-});
+type AuthMode = "sign-in" | "sign-up";
 
-function AuthPage() {
+export default function AuthPage({ initialMode }: { initialMode: AuthMode }) {
+  usePageMeta("Sign in — FareDrop", [
+    {
+      name: "description",
+      content: "Sign in or create your FareDrop account to start watching flight prices.",
+    },
+    { property: "og:title", content: "Sign in — FareDrop" },
+    {
+      property: "og:description",
+      content: "Sign in or create your FareDrop account to start watching flight prices.",
+    },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ]);
+
   const navigate = useNavigate();
-  const [mode, setMode] = useState<"sign-in" | "sign-up">("sign-in");
+  // The mode is driven by the URL so /sign-in and /sign-up are real, linkable
+  // routes; the component stays mounted across the two, so typed input survives.
+  const mode = initialMode;
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -48,7 +47,7 @@ function AuthPage() {
         setError(error.message);
         return;
       }
-      navigate({ to: "/app" });
+      navigate("/app");
     } finally {
       setLoading(false);
     }
@@ -133,8 +132,8 @@ function AuthPage() {
               <button
                 type="button"
                 onClick={() => {
-                  setMode(mode === "sign-in" ? "sign-up" : "sign-in");
                   setError(null);
+                  navigate(mode === "sign-in" ? "/sign-up" : "/sign-in");
                 }}
                 className="font-medium text-primary hover:underline"
               >

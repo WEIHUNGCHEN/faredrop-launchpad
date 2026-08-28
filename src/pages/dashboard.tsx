@@ -1,28 +1,24 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { Plane, LogOut, BellRing, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/lib/auth";
+import { usePageMeta } from "@/lib/page-meta";
 
-export const Route = createFileRoute("/_authenticated/app")({
-  head: () => ({
-    meta: [
-      { title: "Your watchlist — FareDrop" },
-      { name: "description", content: "Your FareDrop route watchlist and price alerts." },
-      { name: "robots", content: "noindex" },
-    ],
-  }),
-  component: AppShell,
-});
+export default function DashboardPage() {
+  usePageMeta("Your watchlist — FareDrop", [
+    { name: "description", content: "Your FareDrop route watchlist and price alerts." },
+    { name: "robots", content: "noindex" },
+  ]);
 
-function AppShell() {
-  const { user } = Route.useRouteContext();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const [signingOut, setSigningOut] = useState(false);
 
   async function handleSignOut() {
     setSigningOut(true);
     await supabase.auth.signOut();
-    navigate({ to: "/", replace: true });
+    navigate("/", { replace: true });
   }
 
   return (
@@ -52,7 +48,7 @@ function AppShell() {
 
       <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col px-6 py-16">
         <div className="animate-fade-up">
-          <h1 className="text-3xl font-bold tracking-tight">Hi {user.email}</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Hi {user?.email}</h1>
           <p className="mt-2 text-muted-foreground">Welcome to your FareDrop dashboard.</p>
         </div>
 

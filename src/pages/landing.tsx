@@ -1,27 +1,7 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { Link } from "react-router-dom";
 import { Plane, BellRing, LineChart, ArrowRight } from "lucide-react";
 
-export const Route = createFileRoute("/")({
-  head: () => ({
-    meta: [
-      { title: "FareDrop — 設定航線，票價一降就通知你" },
-      {
-        name: "description",
-        content:
-          "FareDrop watches flight prices on the routes you care about and emails you the moment they drop. Set your route, get an alert the moment the price drops.",
-      },
-      { property: "og:title", content: "FareDrop — Flight price drop alerts" },
-      {
-        property: "og:description",
-        content:
-          "Set your route, get an alert the moment the price drops. FareDrop watches fares so you don't have to.",
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
-  component: LandingPage,
-});
+import { usePageMeta } from "@/lib/page-meta";
 
 const features = [
   {
@@ -47,7 +27,23 @@ const features = [
   },
 ];
 
-function LandingPage() {
+export default function LandingPage() {
+  usePageMeta("FareDrop — 設定航線，票價一降就通知你", [
+    {
+      name: "description",
+      content:
+        "FareDrop watches flight prices on the routes you care about and emails you the moment they drop. Set your route, get an alert the moment the price drops.",
+    },
+    { property: "og:title", content: "FareDrop — Flight price drop alerts" },
+    {
+      property: "og:description",
+      content:
+        "Set your route, get an alert the moment the price drops. FareDrop watches fares so you don't have to.",
+    },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary_large_image" },
+  ]);
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* Header */}
@@ -60,7 +56,7 @@ function LandingPage() {
             <span className="text-lg font-semibold tracking-tight">FareDrop</span>
           </Link>
           <Link
-            to="/auth"
+            to="/sign-in"
             className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-all hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/20"
           >
             Sign in / 登入
@@ -85,7 +81,7 @@ function LandingPage() {
           </p>
           <div className="animate-fade-up-delay-3 mt-10 flex flex-wrap items-center justify-center gap-3">
             <Link
-              to="/auth"
+              to="/sign-in"
               className="inline-flex items-center gap-2 rounded-lg bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition-all hover:bg-primary/90 hover:shadow-xl hover:shadow-primary/25"
             >
               Start watching fares
