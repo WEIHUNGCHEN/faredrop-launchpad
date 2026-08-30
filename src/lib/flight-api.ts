@@ -12,7 +12,7 @@ const DEFAULT_API_BASE = "https://vhfxysyugh.execute-api.us-east-1.amazonaws.com
 export const API_BASE: string =
   import.meta.env["VITE_FLIGHT_API_URL"] || DEFAULT_API_BASE;
 
-export type PlanName = "tokyo" | "seoul";
+export type PlanName = "tokyo" | "seoul" | "london";
 
 export type Plan = {
   name: PlanName;
@@ -40,6 +40,14 @@ export const PLANS: Plan[] = [
     destination: "SEL",
     route: "TPE-SEL",
     hint: 4298,
+  },
+  {
+    name: "london",
+    label: "台北 ✈ 倫敦",
+    origin: "TPE",
+    destination: "LON",
+    route: "TPE-LON",
+    hint: 24473,
   },
 ];
 
