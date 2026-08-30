@@ -70,7 +70,7 @@ export default function AuthPage({ initialMode }: { initialMode: AuthMode }) {
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-background text-foreground">
+    <div className="night-sky flex min-h-screen flex-col bg-background text-foreground">
       <header className="border-b border-border/60">
         <div className="mx-auto flex h-16 max-w-6xl items-center px-6">
           <Link to="/" className="flex items-center gap-2.5">
@@ -84,7 +84,7 @@ export default function AuthPage({ initialMode }: { initialMode: AuthMode }) {
 
       <main className="flex flex-1 items-center justify-center px-6 py-16">
         <div className="animate-fade-up w-full max-w-sm">
-          <div className="rounded-2xl border border-border bg-card p-8 shadow-2xl shadow-black/40">
+          <div className="cloud-card rounded-2xl border border-border bg-card p-8">
             {awaitingConfirmation ? (
               <div className="text-center">
                 <span className="mx-auto mb-5 flex size-12 items-center justify-center rounded-xl bg-accent text-accent-foreground">

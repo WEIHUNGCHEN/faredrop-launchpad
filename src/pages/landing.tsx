@@ -45,7 +45,7 @@ export default function LandingPage() {
   ]);
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="night-sky min-h-screen bg-background text-foreground">
       {/* Header */}
       <header className="sticky top-0 z-50 border-b border-border/60 bg-background/80 backdrop-blur-md">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
@@ -113,7 +113,7 @@ export default function LandingPage() {
             {features.map((feature) => (
               <div
                 key={feature.title}
-                className="reveal-on-scroll group rounded-2xl border border-border bg-card p-8 transition-colors hover:border-primary/40"
+                className="reveal-on-scroll cloud-card group rounded-2xl border border-border bg-card p-8 transition-colors hover:border-primary/40"
               >
                 <div className="mb-5 inline-flex size-11 items-center justify-center rounded-xl bg-accent text-accent-foreground transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
                   <feature.icon className="size-5" />

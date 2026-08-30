@@ -67,7 +67,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-background text-foreground">
+    <div className="night-sky flex min-h-screen flex-col bg-background text-foreground">
       <header className="sticky top-0 z-50 border-b border-border/60 bg-background/80 backdrop-blur-md">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
           <div className="flex items-center gap-2.5">
@@ -179,7 +179,7 @@ function PlanCard({
   }
 
   return (
-    <div className="flex flex-col rounded-2xl border border-border bg-card p-6">
+    <div className="cloud-card flex flex-col rounded-2xl border border-border bg-card p-6">
       <div className="flex items-start justify-between gap-3">
         <div>
           <h2 className="text-xl font-semibold tracking-tight text-card-foreground">

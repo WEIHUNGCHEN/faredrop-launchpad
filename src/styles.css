@@ -50,39 +50,60 @@
 
 :root {
   --radius: 0.625rem;
-  /* FareDrop: near-black, sky-cyan accent */
-  --background: oklch(0.145 0.012 240);
-  --foreground: oklch(0.96 0.008 230);
-  --card: oklch(0.185 0.015 240);
-  --card-foreground: oklch(0.96 0.008 230);
-  --popover: oklch(0.185 0.015 240);
-  --popover-foreground: oklch(0.96 0.008 230);
-  --primary: oklch(0.74 0.15 215);
-  --primary-foreground: oklch(0.16 0.02 240);
-  --secondary: oklch(0.22 0.02 240);
-  --secondary-foreground: oklch(0.96 0.008 230);
-  --muted: oklch(0.22 0.02 240);
-  --muted-foreground: oklch(0.68 0.02 235);
-  --accent: oklch(0.24 0.035 220);
-  --accent-foreground: oklch(0.9 0.06 215);
-  --destructive: oklch(0.63 0.21 25);
-  --destructive-foreground: oklch(0.98 0.005 230);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 12%);
-  --ring: oklch(0.74 0.15 215);
-  --chart-1: oklch(0.74 0.15 215);
-  --chart-2: oklch(0.7 0.14 180);
-  --chart-3: oklch(0.65 0.16 260);
-  --chart-4: oklch(0.78 0.14 85);
-  --chart-5: oklch(0.7 0.18 20);
-  --sidebar: oklch(0.175 0.014 240);
-  --sidebar-foreground: oklch(0.96 0.008 230);
-  --sidebar-primary: oklch(0.74 0.15 215);
-  --sidebar-primary-foreground: oklch(0.16 0.02 240);
-  --sidebar-accent: oklch(0.24 0.035 220);
-  --sidebar-accent-foreground: oklch(0.9 0.06 215);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.74 0.15 215);
+  /* FareDrop "Moonlit" theme.
+     Sampled from the reference photograph: a full moon over a sea of cloud at
+     night. Deep midnight navy for the sky overhead, cool blue-grey for the
+     cloud midtones, and a luminous near-white blue for the moon itself, which
+     is the brightest thing in the frame and so becomes the action colour. */
+
+  /* Night sky overhead — the darkest part of the frame */
+  --background: oklch(0.145 0.042 264);
+  /* Moonlight falling on cloud tops */
+  --foreground: oklch(0.955 0.013 250);
+
+  /* Cards read as cloud banks catching the moon: slightly translucent, so the
+     sky gradient behind them shows through. */
+  --card: oklch(0.225 0.048 261 / 0.68);
+  --card-foreground: oklch(0.96 0.013 250);
+  --popover: oklch(0.215 0.048 261);
+  --popover-foreground: oklch(0.96 0.013 250);
+
+  /* The moon */
+  --primary: oklch(0.885 0.045 244);
+  --primary-foreground: oklch(0.175 0.05 264);
+
+  /* Cloud shadow */
+  --secondary: oklch(0.27 0.046 260);
+  --secondary-foreground: oklch(0.94 0.016 250);
+  --muted: oklch(0.27 0.046 260);
+  --muted-foreground: oklch(0.735 0.035 251);
+
+  /* The lit edge of a cloud */
+  --accent: oklch(0.335 0.058 254);
+  --accent-foreground: oklch(0.925 0.042 244);
+
+  --destructive: oklch(0.67 0.175 22);
+  --destructive-foreground: oklch(0.98 0.006 250);
+
+  /* Rim light rather than plain white, so edges stay cool */
+  --border: oklch(0.86 0.05 250 / 14%);
+  --input: oklch(0.86 0.05 250 / 18%);
+  --ring: oklch(0.86 0.06 245);
+
+  --chart-1: oklch(0.885 0.045 244);
+  --chart-2: oklch(0.74 0.07 250);
+  --chart-3: oklch(0.6 0.09 262);
+  --chart-4: oklch(0.82 0.05 238);
+  --chart-5: oklch(0.48 0.08 258);
+
+  --sidebar: oklch(0.175 0.045 263);
+  --sidebar-foreground: oklch(0.955 0.013 250);
+  --sidebar-primary: oklch(0.885 0.045 244);
+  --sidebar-primary-foreground: oklch(0.175 0.05 264);
+  --sidebar-accent: oklch(0.335 0.058 254);
+  --sidebar-accent-foreground: oklch(0.925 0.042 244);
+  --sidebar-border: oklch(0.86 0.05 250 / 14%);
+  --sidebar-ring: oklch(0.86 0.06 245);
 }
 
 @layer base {
@@ -99,6 +120,11 @@
     color: var(--color-foreground);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
+  }
+
+  /* Selection reads as moonlight instead of the browser default blue. */
+  ::selection {
+    background-color: oklch(0.885 0.045 244 / 0.3);
   }
 }
 
@@ -147,9 +173,80 @@
   animation-range: entry 0% entry 60%;
 }
 
-/* Ambient hero glow */
+/* ---------------------------------------------------------------------------
+   Moonlit atmosphere.
+
+   Everything below is decorative only: background layers on existing elements.
+   Nothing here affects layout, receives pointer events, or is depended on by
+   any component, so behaviour is unchanged.
+   --------------------------------------------------------------------------- */
+
+/* The night sky behind every page.
+
+   Layer order (first layer paints nearest the viewer):
+     1-14  stars, scattered and deliberately faint
+     15    the moon's halo bleeding down from above the fold
+     16    the cloud sea glowing along the bottom horizon
+     17    the sky itself: near-black overhead, lifting toward the lit cloud
+           layer at the bottom, as in the reference photo
+
+   background-attachment: fixed holds the sky still while the page scrolls,
+   the way a real horizon behaves. */
+@utility night-sky {
+  background-color: var(--color-background);
+  background-image:
+    radial-gradient(1.4px 1.4px at 8% 12%, oklch(0.99 0.01 250 / 0.85), transparent 100%),
+    radial-gradient(1px 1px at 17% 27%, oklch(0.97 0.01 250 / 0.55), transparent 100%),
+    radial-gradient(1.6px 1.6px at 24% 7%, oklch(0.99 0.01 250 / 0.7), transparent 100%),
+    radial-gradient(1px 1px at 33% 19%, oklch(0.97 0.01 250 / 0.45), transparent 100%),
+    radial-gradient(1.2px 1.2px at 41% 5%, oklch(0.99 0.01 250 / 0.6), transparent 100%),
+    radial-gradient(1px 1px at 58% 14%, oklch(0.97 0.01 250 / 0.5), transparent 100%),
+    radial-gradient(1.5px 1.5px at 67% 24%, oklch(0.99 0.01 250 / 0.75), transparent 100%),
+    radial-gradient(1px 1px at 74% 9%, oklch(0.97 0.01 250 / 0.45), transparent 100%),
+    radial-gradient(1.3px 1.3px at 83% 18%, oklch(0.99 0.01 250 / 0.65), transparent 100%),
+    radial-gradient(1px 1px at 91% 30%, oklch(0.97 0.01 250 / 0.5), transparent 100%),
+    radial-gradient(1.1px 1.1px at 96% 11%, oklch(0.99 0.01 250 / 0.6), transparent 100%),
+    radial-gradient(1px 1px at 13% 38%, oklch(0.97 0.01 250 / 0.35), transparent 100%),
+    radial-gradient(1px 1px at 52% 33%, oklch(0.97 0.01 250 / 0.3), transparent 100%),
+    radial-gradient(1px 1px at 88% 41%, oklch(0.97 0.01 250 / 0.3), transparent 100%),
+    radial-gradient(circle 38rem at 50% -8rem, oklch(0.93 0.03 244 / 0.16), transparent 68%),
+    radial-gradient(ellipse 130% 40% at 50% 106%, oklch(0.7 0.055 251 / 0.3), transparent 74%),
+    linear-gradient(
+      180deg,
+      oklch(0.115 0.04 266) 0%,
+      oklch(0.15 0.045 264) 34%,
+      oklch(0.225 0.055 260) 74%,
+      oklch(0.33 0.052 256) 100%
+    );
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+}
+
+/* The moon, rising behind the header on the landing hero.
+
+   The disc sits mostly above the fold so only its lower edge and halo show.
+   That lights the page without ever putting a bright disc behind the
+   headline, which is what the reference photo does too — the moon has clear
+   sky around it. */
 @utility hero-glow {
-  background:
-    radial-gradient(ellipse 60% 45% at 50% 0%, oklch(0.74 0.15 215 / 0.14), transparent 70%),
-    radial-gradient(ellipse 40% 35% at 75% 25%, oklch(0.65 0.16 260 / 0.08), transparent 70%);
+  background-image:
+    radial-gradient(
+      circle 7.5rem at 50% -3.5rem,
+      oklch(0.98 0.012 242 / 0.97) 0%,
+      oklch(0.95 0.02 244 / 0.9) 55%,
+      oklch(0.9 0.032 246 / 0.5) 78%,
+      oklch(0.88 0.04 248 / 0.12) 92%,
+      transparent 100%
+    ),
+    radial-gradient(circle 24rem at 50% -3.5rem, oklch(0.9 0.045 245 / 0.19), transparent 70%),
+    radial-gradient(ellipse 80% 45% at 50% 118%, oklch(0.68 0.06 252 / 0.26), transparent 72%);
+  background-repeat: no-repeat;
+}
+
+/* Cards lift off the sky with a cool rim light rather than a hard edge. */
+@utility cloud-card {
+  backdrop-filter: blur(14px) saturate(115%);
+  box-shadow:
+    0 1px 0 0 oklch(0.95 0.02 248 / 0.09) inset,
+    0 18px 45px -22px oklch(0.06 0.03 265 / 0.9);
 }
