@@ -226,7 +226,7 @@ function PlanCard({
                 type="number"
                 inputMode="numeric"
                 min={1}
-                step={100}
+                step={1}
                 required
                 placeholder={String(plan.hint)}
                 value={value}
