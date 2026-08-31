@@ -175,13 +175,14 @@ function PlanCard({
   const showForm = subscription === null || status === "expired" || editing;
   const badge = status ? STATUS_BADGE[status] : null;
 
-  async function save(target: number) {
+  async function save(target: number, resubscribe = false) {
     setState({ pending: true, error: null });
     try {
       const saved = await saveSubscription({
         email,
         plan_name: plan.name,
         target_price: target,
+        ...(resubscribe ? { resubscribe: true } : {}),
       });
       // "checkout" means the document has been replaced and the browser is on
       // its way to ECPay — there is no state left to update here.
@@ -290,7 +291,7 @@ function PlanCard({
               {subscription?.current_period_end_date
                 ? `，${subscription.current_period_end_date} 前仍會通知你`
                 : "，本期結束前仍會通知你"}
-              。
+              。重新訂閱會開一筆新的定期定額，剩下的天數不受影響。
             </p>
           ) : null}
 
@@ -366,6 +367,22 @@ function PlanCard({
                     <CreditCard className="size-4" />
                   )}
                   完成付款
+                </button>
+              ) : null}
+
+              {status === "cancelled" ? (
+                <button
+                  type="button"
+                  disabled={state.pending}
+                  onClick={() => save(subscription?.target_price ?? plan.hint, true)}
+                  className="inline-flex items-center justify-center gap-2 rounded-md bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-60"
+                >
+                  {state.pending ? (
+                    <Loader2 className="size-4 animate-spin" />
+                  ) : (
+                    <CreditCard className="size-4" />
+                  )}
+                  重新訂閱 · {formatTwd(MONTHLY_PRICE_TWD)}/月
                 </button>
               ) : null}
 

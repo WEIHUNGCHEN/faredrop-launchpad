@@ -126,6 +126,12 @@ export async function saveSubscription(input: {
   email: string;
   plan_name: PlanName;
   target_price: number;
+  /**
+   * Set only by 重新訂閱. Cancelling stops the ECPay recurring order for good,
+   * so resuming needs a brand-new order — it cannot be inferred from a plain
+   * save, which for a cancelled route still means "just change my target".
+   */
+  resubscribe?: boolean;
 }): Promise<SaveResult> {
   const res = await fetch(`${API_BASE}/subscribe`, {
     method: "POST",
